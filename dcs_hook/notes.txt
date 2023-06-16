@@ -1,0 +1,128 @@
+{
+	16777984 = 
+	{
+		Pitch = 0.11145424842834,
+		Type = 
+		{
+			level3 = 6,
+			level1 = 1,
+			level4 = 17,
+			level2 = 1,
+		},
+		Country = 2,
+		GroupName = "Aerial-1",
+		Flags = 
+		{
+			Jamming = false,
+			IRJamming = false,
+			Born = true,
+			Static = false,
+			Invisible = false,
+			Human = true,
+			AI_ON = true,
+			RadarActive = false,
+		},
+		Coalition = "Enemies",
+		Heading = 6.2831302017439,
+		Name = "A-10A",
+		Position = 
+		{
+			y = 1998.6550977986,
+			x = -296400.41071396,
+			z = 650468.56257717,
+		},
+		UnitName = "New callsign",
+		LatLongAlt = 
+		{
+			Long = 42.067436949509,
+			Lat = 42.107803138765,
+			Alt = 1998.6550977986,
+		},
+		CoalitionID = 2,
+		Bank = 1.1220181477256e-06,
+	},
+	16777472 = 
+	{
+		Pitch = -7.4184295954183e-05,
+		Type = 
+		{
+			level3 = 26,
+			level1 = 2,
+			level4 = 10,
+			level2 = 17,
+		},
+		Country = 2,
+		GroupName = "Ground-1",
+		Flags = 
+		{
+			Jamming = false,
+			IRJamming = false,
+			Born = true,
+			Static = false,
+			Invisible = false,
+			Human = false,
+			AI_ON = true,
+			RadarActive = false,
+		},
+		Coalition = "Enemies",
+		Heading = 6.2831854820251,
+		Name = "AAV7",
+		Position = 
+		{
+			y = 5.0437929821073,
+			x = -298272.15624985,
+			z = 638141.00000025,
+		},
+		UnitName = "Ground-1-1",
+		LatLongAlt = 
+		{
+			Long = 41.917802718202,
+			Lat = 42.102789310863,
+			Alt = 5.0437929821073,
+		},
+		CoalitionID = 2,
+		Bank = 0.00025212380569428,
+	},
+	16777728 = 
+	{
+		Pitch = -7.4138784839306e-05,
+		Type = 
+		{
+			level3 = 26,
+			level1 = 2,
+			level4 = 7,
+			level2 = 17,
+		},
+		Country = 2,
+		GroupName = "Ground-1",
+		Flags = 
+		{
+			Jamming = false,
+			IRJamming = false,
+			Born = true,
+			Static = false,
+			Invisible = false,
+			Human = false,
+			AI_ON = true,
+			RadarActive = false,
+		},
+		Coalition = "Enemies",
+		Heading = 6.2831854820251,
+		Name = "LAV-25",
+		Position = 
+		{
+			y = 5.0467526507579,
+			x = -298312.15624999,
+			z = 638141.00000025,
+		},
+		UnitName = "Ground-1-2",
+		LatLongAlt = 
+		{
+			Long = 41.917752437731,
+			Lat = 42.102433414358,
+			Alt = 5.0467526507579,
+		},
+		CoalitionID = 2,
+		Bank = 0.00025212380569428,
+	},
+}
