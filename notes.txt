@@ -126,3 +126,18 @@
 		Bank = 0.00025212380569428,
 	},
 }
+
+
+
+
+ 
+
+ = 
+{
+	Flags = 
+	{
+
+		AI_ON = true,
+		RadarActive = false,
+	},
+},
