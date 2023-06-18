@@ -47,7 +47,7 @@ function Bestia.TableSerialize(tab, max_depth, indent)
 end
 
 function Bestia.UnitsTableToCSV(tab)
-	local header = "id, GroupName, UnitName, UnitType, Coalition, CoalitionID, Country, PositionX, PositionY, PositionZ, Longitude, Latitude, Altitude, Heading, Pitch, Bank, IsHuman, IsInvisible, IsRadarActive, IsJamming, IsIRJamming, IsBorn, IsStatic, IsAI_ON"
+	local header = "id, GroupName, UnitName, UnitType, Coalition, CoalitionID, Country, PositionX, PositionY, PositionZ, Latitude, Longitude, Altitude, Heading, Pitch, Bank, IsHuman, IsInvisible, IsRadarActive, IsJamming, IsIRJamming, IsBorn, IsStatic, IsAI_ON"
 	local separator = ", "
 	local result = header
 
@@ -63,8 +63,8 @@ function Bestia.UnitsTableToCSV(tab)
 		result = result .. v.Position.x .. separator
 		result = result .. v.Position.y .. separator
 		result = result .. v.Position.z .. separator
-		result = result .. v.LatLongAlt.Long .. separator
 		result = result .. v.LatLongAlt.Lat .. separator
+		result = result .. v.LatLongAlt.Long .. separator
 		result = result .. v.LatLongAlt.Alt .. separator
 		result = result .. v.Heading .. separator
 		result = result .. v.Pitch .. separator
@@ -98,7 +98,9 @@ function Bestia.GetResponse(request)
 	if request.method == "GET" and request.path == "/ping" then
 		return "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\npong"
 	elseif request.method == "GET" and request.path == "/units" then
-		return "HTTP/1.1 200 OK\r\nContent-Type: text/csv\r\n\r\n" .. Bestia.UnitsTableToCSV(Bestia.TakeWorldScreenshot())
+		local units_screenshot = Bestia.TakeWorldScreenshot()
+		log.write('Bestia', log.INFO, 'Every unit: ' .. Bestia.TableSerialize(units_screenshot))
+		return "HTTP/1.1 200 OK\r\nContent-Type: text/csv\r\n\r\n" .. Bestia.UnitsTableToCSV(units_screenshot)
 	end
 
 	return nil
