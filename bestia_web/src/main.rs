@@ -1,13 +1,16 @@
 mod camera_movement_plugin;
+mod dcs_data_plugin;
 
 use bevy::prelude::*;
 use bevy::math::f32::Quat;
 use camera_movement_plugin::*;
+use dcs_data_plugin::*;
 
 fn main() {
     App::new()
 		.add_plugins(DefaultPlugins)
 		.add_plugin(CameraMovementPlugin)
+		.add_plugin(DCSDataPlugin)
 		.add_startup_system(setup)
 		.run();
 }
