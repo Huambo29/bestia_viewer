@@ -54,21 +54,41 @@ function Bestia.UnitsTableToCSV(tab)
 	for k, v in pairs(tab) do
 		result = result .. "\n"
 		result = result .. k .. separator --id 
-		result = result .. "\"" .. v.GroupName .. "\"" .. separator
-		result = result .. "\"" .. v.UnitName .. "\"" .. separator
-		result = result .. "\"" .. v.Name .. "\"" .. separator --UnitType
-		result = result .. "\"" .. v.Coalition .. "\"" .. separator
-		result = result .. v.CoalitionID .. separator
-		result = result .. v.Country .. separator
-		result = result .. v.Position.x .. separator
-		result = result .. v.Position.y .. separator
-		result = result .. v.Position.z .. separator
-		result = result .. v.LatLongAlt.Lat .. separator
-		result = result .. v.LatLongAlt.Long .. separator
-		result = result .. v.LatLongAlt.Alt .. separator
-		result = result .. v.Heading .. separator
-		result = result .. v.Pitch .. separator
-		result = result .. v.Bank .. separator
+		if v.GroupName then
+			result = result .. "\"" .. v.GroupName .. "\"" .. separator
+		else
+			result = result .. "nil" .. separator
+		end
+
+		if v.UnitName then
+			result = result .. "\"" .. v.UnitName .. "\"" .. separator
+		else
+			result = result .. "nil" .. separator
+		end
+
+		if  v.Name then
+			result = result .. "\"" ..  v.Name .. "\"" .. separator
+		else
+			result = result .. "nil" .. separator
+		end
+
+		if v.Coalition then
+			result = result .. "\"" .. v.Coalition .. "\"" .. separator
+		else
+			result = result .. "nil" .. separator
+		end
+		
+		result = result .. (v.CoalitionID or "nil") .. separator
+		result = result .. (v.Country or "nil") .. separator
+		result = result .. (v.Position.x or "nil") .. separator
+		result = result .. (v.Position.y or "nil") .. separator
+		result = result .. (v.Position.z or "nil") .. separator
+		result = result .. (v.LatLongAlt.Lat or "nil") .. separator
+		result = result .. (v.LatLongAlt.Long or "nil") .. separator
+		result = result .. (v.LatLongAlt.Alt or "nil") .. separator
+		result = result .. (v.Heading or "nil") .. separator
+		result = result .. (v.Pitch or "nil") .. separator
+		result = result .. (v.Bank or "nil") .. separator
 		result = result .. (v.Flags.Human and "true" or "false") .. separator
 		result = result .. (v.Flags.Invisible and "true" or "false") .. separator
 		result = result .. (v.Flags.RadarActive and "true" or "false") .. separator
@@ -95,12 +115,14 @@ function Bestia.StartApi()
 end
 
 function Bestia.GetResponse(request)
+	--if request.method == "OPTIONS" then
+	--	return --"HTTP/1.1 200 No Content\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST\r\nAccess-Control-Allow-Headers: Access-Control-Allow-Headers, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers\r\nAccess-Control-Max-Age: 86400\r\n\r\n"
 	if request.method == "GET" and request.path == "/ping" then
-		return "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\npong"
+		return "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST\r\nAccess-Control-Allow-Headers: Access-Control-Allow-Headers, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers\r\nAccess-Control-Max-Age: 86400\r\n\r\npong"
 	elseif request.method == "GET" and request.path == "/units" then
 		local units_screenshot = Bestia.TakeWorldScreenshot()
 		log.write('Bestia', log.INFO, 'Every unit: ' .. Bestia.TableSerialize(units_screenshot))
-		return "HTTP/1.1 200 OK\r\nContent-Type: text/csv\r\n\r\n" .. Bestia.UnitsTableToCSV(units_screenshot)
+		return "HTTP/1.1 200 OK\r\nContent-Type: text/csv\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST\r\nAccess-Control-Allow-Headers: Access-Control-Allow-Headers, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers\r\nAccess-Control-Max-Age: 86400\r\n\r\n" .. Bestia.UnitsTableToCSV(units_screenshot)
 	end
 
 	return nil
@@ -148,6 +170,7 @@ function LuaExportAfterNextFrame()
 					local request = Bestia.DeserializeRequest(request_text)
 					local response = Bestia.GetResponse(request)
 					if response then
+						log.write('Bestia', log.INFO, "sending response: " .. response)
 						client:send(response)
 					end
 				end
