@@ -89,14 +89,14 @@ function Bestia.UnitsTableToCSV(tab)
 		result = result .. (v.Heading or "nil") .. separator
 		result = result .. (v.Pitch or "nil") .. separator
 		result = result .. (v.Bank or "nil") .. separator
-		result = result .. (v.Flags.Human and "true" or "false") .. separator
-		result = result .. (v.Flags.Invisible and "true" or "false") .. separator
-		result = result .. (v.Flags.RadarActive and "true" or "false") .. separator
-		result = result .. (v.Flags.Jamming and "true" or "false") .. separator
-		result = result .. (v.Flags.IRJamming and "true" or "false") .. separator
-		result = result .. (v.Flags.Born and "true" or "false") .. separator
-		result = result .. (v.Flags.Static and "true" or "false") .. separator
-		result = result .. (v.Flags.AI_ON and "true" or "false")
+		result = result .. (v.Flags.Human ~= nil and (v.Flags.Human and "true" or "false") or "nil") .. separator
+		result = result .. (v.Flags.Invisible ~= nil and (v.Flags.Invisible and "true" or "false") or "nil") .. separator
+		result = result .. (v.Flags.RadarActive ~= nil and (v.Flags.RadarActive and "true" or "false") or "nil") .. separator
+		result = result .. (v.Flags.Jamming ~= nil and (v.Flags.Jamming and "true" or "false") or "nil") .. separator
+		result = result .. (v.Flags.IRJamming ~= nil and (v.Flags.IRJamming and "true" or "false") or "nil") .. separator
+		result = result .. (v.Flags.Born ~= nil and (v.Flags.Born and "true" or "false") or "nil") .. separator
+		result = result .. (v.Flags.Static ~= nil and (v.Flags.Static and "true" or "false") or "nil") .. separator
+		result = result .. (v.Flags.AI_ON ~= nil and (v.Flags.AI_ON and "true" or "false") or "nil")
 	end
 
 	return result
