@@ -24,7 +24,7 @@ fn setup(
 	commands.spawn(SceneBundle  {
         scene: asset_server.load("test_imports/caucasus_low_poly.gltf#Scene0"),
         //material: materials.add(Color::rgb(0.7, 0.7, 0.7).into()),
-		transform: Transform::from_xyz(1.0, 0.0, 0.5).with_scale(Vec3::new(0.5, 0.5, 0.5)),
+		transform: Transform::from_xyz(4.5, 0.0, 2.25).with_scale(Vec3::new(2.25, 2.25, 2.25)),
         ..default()
     });
 
@@ -32,7 +32,7 @@ fn setup(
         //mesh: asset_server.load("test_imports/batumi_mess.glb").into(),
 		mesh: meshes.add(Mesh::from(shape::Cube { size: 0.1 })),
         material: materials.add(Color::rgb(0.5, 0.0, 0.0).into()),
-		transform: Transform::from_xyz(0.0, 0.0, 0.0),
+		transform: Transform::from_xyz(0.0, 0.05, 0.0),
         ..default()
     });
 
@@ -40,7 +40,7 @@ fn setup(
         //mesh: asset_server.load("test_imports/batumi_mess.glb").into(),
 		mesh: meshes.add(Mesh::from(shape::Cube { size: 0.1 })),
         material: materials.add(Color::rgb(0.0, 0.0, 0.5).into()),
-		transform: Transform::from_xyz(2.0, 0.0, 1.0),
+		transform: Transform::from_xyz(9.0, 0.05, 4.5),
         ..default()
     });
 

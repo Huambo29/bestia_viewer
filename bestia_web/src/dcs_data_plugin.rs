@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use crossbeam_channel::{unbounded, Receiver};
 use std::collections::{HashMap, HashSet};
-use std::any::type_name;
+use bevy::math::EulerRot;
 
 pub struct DCSDataPlugin;
 
@@ -9,7 +9,8 @@ impl Plugin for DCSDataPlugin {
     fn build(&self, app: &mut App) {
         info!("lul");
         app.add_startup_system(dcs_data_setup_system)
-            .add_system(dcs_data_stream_system);
+            .add_system(dcs_data_stream_system)
+			.add_system(dcs_entities_update_system);
     }
 }
 
@@ -157,11 +158,21 @@ pub struct DCSUnitComponent {
 	pub dcs_unit: DCSUnit
 }
 
+fn dcs_entities_update_system(mut dcs_units_query: Query<(&mut Transform, &mut DCSUnitComponent)>){
+	for (mut unit_transform, mut dcs_unit_component) in dcs_units_query.iter_mut() {
+		let dcs_unit = dcs_unit_component.dcs_unit.clone();
+		unit_transform.translation = Vec3::new(dcs_unit.longitude.unwrap() - 34.265278, dcs_unit.altitude.unwrap() / 25000.0, -(dcs_unit.latitude.unwrap() - 45.129444));
+		unit_transform.rotation = Quat::from_euler(EulerRot::YXZ, -dcs_unit.heading.unwrap(), dcs_unit.pitch.unwrap(), -dcs_unit.bank.unwrap())
+	}
+}
+
 fn dcs_data_stream_system(
 	mut commands: Commands,
 	receiver: Res<DCSDataReceiver>,
 	mut dcs_units_data: ResMut<DCSUnitsData>,
 	mut dcs_units_query: Query<(Entity, &mut DCSUnitComponent)>,
+	mut meshes: ResMut<Assets<Mesh>>,
+	mut materials: ResMut<Assets<StandardMaterial>>
 ) {
     for from_stream in receiver.try_iter() {
         info!("test stream:\n{}", from_stream);
@@ -193,11 +204,18 @@ fn dcs_data_stream_system(
 		for (unit_id, dcs_unit) in current_dcs_units.into_iter() {
 			if !processed_units.contains(&unit_id) {
 				info!("creating entity unit id: {:?}", unit_id);
-				commands.spawn(
+
+				commands.spawn((
 					DCSUnitComponent {
-						dcs_unit: dcs_unit
+						dcs_unit: dcs_unit.clone()
+					},
+					PbrBundle {
+						//mesh: asset_server.load("test_imports/batumi_mess.glb").into(),
+						mesh: meshes.add(Mesh::from(shape::Cube { size: 0.1 })),
+						material: materials.add(Color::rgb(0.0, 0.5, 0.0).into()),
+						..default()
 					}
-				);
+				));
 			}
 		}
     }
