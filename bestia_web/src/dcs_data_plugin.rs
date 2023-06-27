@@ -2,13 +2,14 @@ use bevy::prelude::*;
 use crossbeam_channel::{unbounded, Receiver};
 use std::collections::{HashMap, HashSet};
 use bevy::math::EulerRot;
+use crate::world_labels_plugin::LabelOwnerComponent;
 
 pub struct DCSDataPlugin;
 
 impl Plugin for DCSDataPlugin {
     fn build(&self, app: &mut App) {
         info!("lul");
-        app.add_startup_system(dcs_data_setup_system)
+        app.add_startup_system(dcs_data_setup)
             .add_system(dcs_data_stream_system)
 			.add_system(dcs_entities_update_system);
     }
@@ -20,19 +21,13 @@ struct DCSDataReceiver(Receiver<String>);
 #[derive(Resource)]
 struct DCSUnitsData(HashMap<i32, DCSUnit>);
 
-fn dcs_data_setup_system(mut commands: Commands, time: Res<Time>) {
+fn dcs_data_setup(mut commands: Commands, time: Res<Time>) {
     let (dcs_data_tx, dcs_data_rx) = unbounded::<String>();
 
     wasm_bindgen_futures::spawn_local(async move {
         let client = reqwest::Client::new();
 
-        let mut i = 1;
         loop {
-            i += 1;
-            if i >= 200 {
-                break;
-            }
-
 			let response = client
 				.get("http://127.0.0.1:2137/units")
 				.send()
@@ -179,7 +174,7 @@ fn dcs_data_stream_system(
 	mut materials: ResMut<Assets<StandardMaterial>>
 ) {
     for from_stream in receiver.try_iter() {
-        info!("test stream:\n{}", from_stream);
+        //info!("test stream:\n{}", from_stream);
 
 		let mut current_dcs_units = HashMap::new();
 
@@ -189,17 +184,17 @@ fn dcs_data_stream_system(
 			let unit = DCSUnit::new(csv_line.to_string());
 			current_dcs_units.insert(unit.id, unit);
 		}
-		info!("current_dcs_units: {:?}", current_dcs_units);
+		//info!("current_dcs_units: {:?}", current_dcs_units);
 
 		let mut processed_units = HashSet::new();
 
 		for (entity, mut dcs_unit_component) in dcs_units_query.iter_mut() {
 			let dcs_unit_id = dcs_unit_component.dcs_unit.id;
 			if !current_dcs_units.contains_key(&dcs_unit_id) {
-				info!("Removing entity unit id: {:?}", dcs_unit_id);
+				//info!("Removing entity unit id: {:?}", dcs_unit_id);
 				commands.entity(entity).despawn();
 			} else {
-				info!("updating entity unit id: {:?}", dcs_unit_id);
+				//info!("updating entity unit id: {:?}", dcs_unit_id);
 				dcs_unit_component.dcs_unit = current_dcs_units.get(&dcs_unit_id.clone()).unwrap().clone();
 				processed_units.insert(dcs_unit_id);
 			}
@@ -207,7 +202,7 @@ fn dcs_data_stream_system(
 
 		for (unit_id, dcs_unit) in current_dcs_units.into_iter() {
 			if !processed_units.contains(&unit_id) {
-				info!("creating entity unit id: {:?}", unit_id);
+				//info!("creating entity unit id: {:?}", unit_id);
 
 				commands.spawn((
 					DCSUnitComponent {
@@ -215,9 +210,12 @@ fn dcs_data_stream_system(
 					},
 					PbrBundle {
 						//mesh: asset_server.load("test_imports/batumi_mess.glb").into(),
-						mesh: meshes.add(Mesh::from(shape::Cube { size: 0.02 })),
-						material: materials.add(Color::rgb(0.0, 0.5, 0.0).into()),
+						mesh: meshes.add(Mesh::from(shape::Cube { size: 0.001 })),
+						material: materials.add(Color::rgb(0.2, 0.2, 0.2).into()),
 						..default()
+					},
+					LabelOwnerComponent {
+						text: dcs_unit.unit_type.unwrap() 
 					}
 				));
 			}

@@ -1,16 +1,24 @@
 mod camera_movement_plugin;
 mod dcs_data_plugin;
+mod fps_counter_plugin;
+mod world_labels_plugin;
 
+use bevy::diagnostic::FrameTimeDiagnosticsPlugin;
 use bevy::math::f32::Quat;
 use bevy::prelude::*;
 use camera_movement_plugin::*;
 use dcs_data_plugin::*;
+use fps_counter_plugin::*;
+use world_labels_plugin::*;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_plugin(CameraMovementPlugin)
         .add_plugin(DCSDataPlugin)
+        .add_plugin(FrameTimeDiagnosticsPlugin::default())
+        .add_plugin(FPSCounterPlugin)
+		.add_plugin(WorldLabelsPlugin)
         .add_startup_system(setup)
         .run();
 }
@@ -21,35 +29,34 @@ fn setup(
     mut materials: ResMut<Assets<StandardMaterial>>,
     asset_server: Res<AssetServer>,
 ) {
-    commands.spawn(SceneBundle {
-        scene: asset_server.load("test_imports/caucasus_low_poly.gltf#Scene0"),
-        //material: materials.add(Color::rgb(0.7, 0.7, 0.7).into()),
+    commands.spawn(PbrBundle {
+        mesh: asset_server.load("test_imports/caucasus_low_poly.gltf#Mesh0/Primitive0"),
+        material: materials.add(StandardMaterial {
+            base_color: Color::GRAY,
+            base_color_texture: Some(asset_server.load("test_imports/surface_low_count.png")),
+            ..default()
+        }),
         transform: Transform::from_xyz(4.5, 0.0, 2.25).with_scale(Vec3::new(2.25, 2.25, 2.25)),
         ..default()
     });
 
-    commands.spawn(PbrBundle {
-        //mesh: asset_server.load("test_imports/batumi_mess.glb").into(),
+    commands.spawn((PbrBundle {
         mesh: meshes.add(Mesh::from(shape::Cube { size: 0.1 })),
         material: materials.add(Color::rgb(0.5, 0.0, 0.0).into()),
-        transform: Transform::from_xyz(0.0, 0.05, 0.0),
+        transform: Transform::from_xyz(0.0, 0.0, 0.0),
         ..default()
-    });
+    	},
+		LabelOwnerComponent {
+			text: "2137".to_string()
+		}
+	));
 
     commands.spawn(PbrBundle {
-        //mesh: asset_server.load("test_imports/batumi_mess.glb").into(),
         mesh: meshes.add(Mesh::from(shape::Cube { size: 0.1 })),
         material: materials.add(Color::rgb(0.0, 0.0, 0.5).into()),
-        transform: Transform::from_xyz(9.0, 0.05, 4.5),
+        transform: Transform::from_xyz(9.0, 0.0, 4.5),
         ..default()
     });
-
-    //commands.spawn(PbrBundle {
-    //	mesh: meshes.add(Mesh::from(shape::Plane::from_size(5.0))),
-    //    material: materials.add(Color::rgb(0.5, 0.0, 0.0).into()),
-    //	transform: Transform::from_xyz(0.0, -0.5, 0.0),
-    //    ..default()
-    //});
 
     commands.spawn(DirectionalLightBundle {
         directional_light: DirectionalLight {
@@ -68,7 +75,8 @@ fn setup(
                 far: 10000.0,
                 near: 0.01,
                 ..default()
-            }.into(),
+            }
+            .into(),
             ..default()
         },
         CameraMovement { ..default() },
