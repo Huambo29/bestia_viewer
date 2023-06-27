@@ -32,16 +32,20 @@ fn dcs_data_setup_system(mut commands: Commands, time: Res<Time>) {
             if i >= 200 {
                 break;
             }
-            let txt_content = client
-                .get("http://127.0.0.1:2137/units")
-                .send()
-                .await
-                .unwrap()
-                .text()
-                .await
-                .unwrap();
-            //info!("request: {} units:\n{}", i, txt_content);
-            dcs_data_tx.send(txt_content).unwrap();
+
+			let response = client
+				.get("http://127.0.0.1:2137/units")
+				.send()
+				.await;
+			match response {
+				Ok(response) => {
+					let txt_content = response.text().await.unwrap();
+					dcs_data_tx.send(txt_content).unwrap();
+				},
+				Err(e) => {
+					warn!("No dcs connection")
+				}
+			}
         }
     });
 
@@ -161,7 +165,7 @@ pub struct DCSUnitComponent {
 fn dcs_entities_update_system(mut dcs_units_query: Query<(&mut Transform, &mut DCSUnitComponent)>){
 	for (mut unit_transform, mut dcs_unit_component) in dcs_units_query.iter_mut() {
 		let dcs_unit = dcs_unit_component.dcs_unit.clone();
-		unit_transform.translation = Vec3::new(dcs_unit.longitude.unwrap() - 34.265278, dcs_unit.altitude.unwrap() / 25000.0, -(dcs_unit.latitude.unwrap() - 45.129444));
+		unit_transform.translation = Vec3::new(dcs_unit.longitude.unwrap() - 34.265278, dcs_unit.altitude.unwrap() / 111000.0, -(dcs_unit.latitude.unwrap() - 45.129444));
 		unit_transform.rotation = Quat::from_euler(EulerRot::YXZ, -dcs_unit.heading.unwrap(), dcs_unit.pitch.unwrap(), -dcs_unit.bank.unwrap())
 	}
 }
@@ -211,7 +215,7 @@ fn dcs_data_stream_system(
 					},
 					PbrBundle {
 						//mesh: asset_server.load("test_imports/batumi_mess.glb").into(),
-						mesh: meshes.add(Mesh::from(shape::Cube { size: 0.1 })),
+						mesh: meshes.add(Mesh::from(shape::Cube { size: 0.02 })),
 						material: materials.add(Color::rgb(0.0, 0.5, 0.0).into()),
 						..default()
 					}

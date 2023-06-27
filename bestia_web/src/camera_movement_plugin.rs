@@ -47,8 +47,15 @@ fn camera_movement_system(
 			}
 			if mouse_buttons.pressed(MouseButton::Right) {
 				let rotation_speed: f32 = 0.005;
-				transform.rotation *= Quat::from_rotation_y(-rotation_speed * mouse_event.delta.x);
-				transform.rotation *= Quat::from_rotation_x(-rotation_speed * mouse_event.delta.y);
+				//transform.rotation *= Quat::from_rotation_y(-rotation_speed * mouse_event.delta.x);
+				//transform.rotation *= Quat::from_rotation_x(-rotation_speed * mouse_event.delta.y);
+				let (heading, pitch, bank) = transform.rotation.to_euler(EulerRot::YXZ);
+				transform.rotation = Quat::from_euler(
+					EulerRot::YXZ, 
+					heading - rotation_speed * mouse_event.delta.x, 
+					(pitch - rotation_speed * mouse_event.delta.y).max(-1.55).min(-0.01745), 
+					0.0
+				);
 			}
 		}
 
@@ -65,7 +72,7 @@ fn camera_movement_system(
 				}
 			}
 			camera_movement.camera_distance += camera_movement.camera_distance * delta;
-			camera_movement.camera_distance = camera_movement.camera_distance.max(1.0)
+			camera_movement.camera_distance = camera_movement.camera_distance.max(0.1)
 		}
 		let rotated_vector: Vec3 = transform.forward() * camera_movement.camera_distance;
 		transform.translation = camera_movement.root - rotated_vector;
