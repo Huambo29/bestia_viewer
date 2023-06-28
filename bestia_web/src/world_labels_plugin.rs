@@ -29,22 +29,31 @@ fn world_label_system(
 	mut labels_query: Query<(Entity, &UILabel, &mut Text, &mut Style)>
 ) {
 	for (camera, camera_transform) in camera_query.iter() {
-		//info!("cycle starte");
 		let mut labels_to_render: Vec<LabelRenderData> = Vec::new();
-		for (label_owner_component, label_owner_transform) in label_owner_query.iter_mut() {
-			match camera.world_to_viewport(camera_transform, label_owner_transform.translation) {
-				Some(label_screen_vec) => {
-					//info!("label screen: {:?}", label_screen_vec);
-					labels_to_render.push(LabelRenderData{
-						position: label_screen_vec,
-						text: label_owner_component.text.clone()
-					})
-				},
-				None => {
-					//info!("label outside camera view");
+		
+		if let Some(viewport_size) = camera.logical_viewport_size() {
+			//info!("viewport size: x: {} y: {}", viewport_size.x, viewport_size.y);
+
+			for (label_owner_component, label_owner_transform) in label_owner_query.iter_mut() {
+				match camera.world_to_viewport(camera_transform, label_owner_transform.translation) {
+					Some(label_screen_vec) => {
+						//info!("label screen: {:?}", label_screen_vec);
+						if label_screen_vec.x >= 0. && label_screen_vec.x <= viewport_size.x as f32 && label_screen_vec.y >= 0. && label_screen_vec.y <= viewport_size.y {
+							labels_to_render.push(LabelRenderData{
+								position: label_screen_vec,
+								text: label_owner_component.text.clone()
+							})
+						}
+					},
+					None => {
+						//info!("label outside camera view");
+					}
 				}
 			}
+		} else {
+			error!("no viewport size");
 		}
+		
 
 		let mut labels_iterator = labels_query.iter_mut();
 		let mut iter_result = labels_iterator.next();

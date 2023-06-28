@@ -30,10 +30,10 @@ fn setup(
     asset_server: Res<AssetServer>,
 ) {
     commands.spawn(PbrBundle {
-        mesh: asset_server.load("test_imports/caucasus_low_poly.gltf#Mesh0/Primitive0"),
+        mesh: asset_server.load("test_imports/caucasus_high_poly_smooth.glb#Mesh0/Primitive0"),
         material: materials.add(StandardMaterial {
             base_color: Color::GRAY,
-            base_color_texture: Some(asset_server.load("test_imports/surface_low_count.png")),
+            base_color_texture: Some(asset_server.load("test_imports/surface.png")),
             ..default()
         }),
         transform: Transform::from_xyz(4.5, 0.0, 2.25).with_scale(Vec3::new(2.25, 2.25, 2.25)),

@@ -19,18 +19,19 @@ fn fps_counter_setup(
 	mut commands: Commands,
 	asset_server: Res<AssetServer>
 ) {
+	let font = asset_server.load("fonts/RobotoMono-Regular.ttf");
 	commands.spawn((
         TextBundle::from_sections([
             TextSection::new(
                 "FPS: ",
                 TextStyle {
-                    font: asset_server.load("fonts/RobotoMono-Regular.ttf"),
+                    font: font.clone(),
                     font_size: 15.0,
                     color: Color::YELLOW,
                 },
             ),
             TextSection::from_style(TextStyle {
-                font: asset_server.load("fonts/RobotoMono-Regular.ttf"),
+                font: font,
                 font_size: 15.0,
                 color: Color::YELLOW,
             }),
