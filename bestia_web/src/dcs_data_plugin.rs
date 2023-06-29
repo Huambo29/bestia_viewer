@@ -18,8 +18,8 @@ impl Plugin for DCSDataPlugin {
 #[derive(Resource, Deref)]
 struct DCSDataReceiver(Receiver<String>);
 
-#[derive(Resource)]
-struct DCSUnitsData(HashMap<i32, DCSUnit>);
+//#[derive(Resource)]
+//struct DCSUnitsData(HashMap<i32, DCSUnit>);
 
 fn dcs_data_setup(mut commands: Commands, time: Res<Time>) {
     let (dcs_data_tx, dcs_data_rx) = unbounded::<String>();
@@ -45,7 +45,7 @@ fn dcs_data_setup(mut commands: Commands, time: Res<Time>) {
     });
 
     commands.insert_resource(DCSDataReceiver(dcs_data_rx));
-	commands.insert_resource(DCSUnitsData(HashMap::new()));
+	//commands.insert_resource(DCSUnitsData(HashMap::new()));
 }
 
 #[derive(Debug, Clone)]
@@ -157,8 +157,8 @@ pub struct DCSUnitComponent {
 	pub dcs_unit: DCSUnit
 }
 
-fn dcs_entities_update_system(mut dcs_units_query: Query<(&mut Transform, &mut DCSUnitComponent)>){
-	for (mut unit_transform, mut dcs_unit_component) in dcs_units_query.iter_mut() {
+fn dcs_entities_update_system(mut dcs_units_query: Query<(&mut Transform, &DCSUnitComponent)>){
+	for (mut unit_transform, dcs_unit_component) in dcs_units_query.iter_mut() {
 		let dcs_unit = dcs_unit_component.dcs_unit.clone();
 		unit_transform.translation = Vec3::new(dcs_unit.longitude.unwrap() - 34.265278, dcs_unit.altitude.unwrap() / 111000.0, -(dcs_unit.latitude.unwrap() - 45.129444));
 		unit_transform.rotation = Quat::from_euler(EulerRot::YXZ, -dcs_unit.heading.unwrap(), dcs_unit.pitch.unwrap(), -dcs_unit.bank.unwrap())
@@ -168,7 +168,6 @@ fn dcs_entities_update_system(mut dcs_units_query: Query<(&mut Transform, &mut D
 fn dcs_data_stream_system(
 	mut commands: Commands,
 	receiver: Res<DCSDataReceiver>,
-	mut dcs_units_data: ResMut<DCSUnitsData>,
 	mut dcs_units_query: Query<(Entity, &mut DCSUnitComponent)>,
 	mut meshes: ResMut<Assets<Mesh>>,
 	mut materials: ResMut<Assets<StandardMaterial>>
@@ -210,7 +209,7 @@ fn dcs_data_stream_system(
 					},
 					PbrBundle {
 						//mesh: asset_server.load("test_imports/batumi_mess.glb").into(),
-						mesh: meshes.add(Mesh::from(shape::Cube { size: 0.001 })),
+						mesh: meshes.add(Mesh::from(shape::Cube { size: 0.0005 })),
 						material: materials.add(Color::rgb(0.2, 0.2, 0.2).into()),
 						..default()
 					},

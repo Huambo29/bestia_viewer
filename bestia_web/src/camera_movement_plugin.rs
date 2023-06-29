@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use bevy::math::f32::Quat;
 use bevy::ecs::event::EventReader;
 use bevy::input::mouse::*;
+use bevy_mod_raycast::*;
 
 pub struct CameraMovementPlugin;
 
@@ -10,6 +11,9 @@ impl Plugin for CameraMovementPlugin {
 		app.add_system(camera_movement_system);
 	}
 }
+
+#[derive(Component)]
+pub struct TerrainComponent;
 
 #[derive(Component)]
 pub struct CameraMovement {
@@ -27,10 +31,12 @@ impl Default for CameraMovement {
 }
 
 fn camera_movement_system(
-	mut query: Query<(&mut Transform, &mut CameraMovement)>,
+	mut query: Query<(&mut Transform, &mut CameraMovement), Without<TerrainComponent>>,
 	mouse_buttons: Res<Input<MouseButton>>,
 	mut mouse_motion_events: EventReader<MouseMotion>,
-	mut mouse_wheel_events: EventReader<MouseWheel>
+	mut mouse_wheel_events: EventReader<MouseWheel>,
+	//meshes: Res<Assets<Mesh>>,
+	//query_terrain: Query<(&Handle<Mesh>, &Transform, &TerrainComponent)>
 ) {
     for (mut transform, mut camera_movement) in query.iter_mut() {
 		for mouse_event in mouse_motion_events.iter() {
@@ -44,6 +50,24 @@ fn camera_movement_system(
 
 				camera_movement.root += move_speed * vector_forward * mouse_event.delta.y;
 				camera_movement.root += -move_speed * vector_right * mouse_event.delta.x;
+
+				//let root_y = 0.0;
+				//
+				//let raycast_ray = Ray3d::new(Vec3::new(camera_movement.root.x, 1.0, camera_movement.root.z), Vec3::new(0.0, -1.0, 0.0));
+				//for (terrain_mesh_handle, terrain_transform, _) in query_terrain.iter() {
+				//	if let Some(terrain_mesh) = meshes.get(terrain_mesh_handle) {
+				//		let mesh_to_world = terrain_transform.compute_matrix();
+//
+				//		if let Some(intersection) = ray_intersection_over_mesh(
+				//			terrain_mesh,
+				//			&mesh_to_world,
+				//			&raycast_ray,
+				//			Backfaces::Cull
+				//		) {
+				//			info!("raycast distance: {}", intersection.distance())
+				//		}
+				//	}
+				//}	
 			}
 			if mouse_buttons.pressed(MouseButton::Right) {
 				let rotation_speed: f32 = 0.005;

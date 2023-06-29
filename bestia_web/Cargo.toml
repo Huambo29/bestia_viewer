@@ -13,6 +13,10 @@ opt-level = 3
 
 [dependencies]
 bevy = "0.10.1"
+bevy_egui = "0.20.3"
+bevy_mod_raycast = "0.8.0"
 crossbeam-channel = "0.5.8"
 reqwest = "0.11.18"
+ron = "0.8.0"
+serde = "1.0.164"
 wasm-bindgen-futures = "0.4.37"

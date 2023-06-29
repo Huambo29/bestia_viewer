@@ -33,7 +33,7 @@ fn fps_counter_setup(
             TextSection::from_style(TextStyle {
                 font: font,
                 font_size: 15.0,
-                color: Color::YELLOW,
+                color: Color::YELLOW
             }),
         ]),
         FPSCounterComponent,
